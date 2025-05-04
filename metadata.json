@@ -1,0 +1,10 @@
+{
+    "name": "Audio Switch Shortcuts",
+    "description": "Add keyboard shortcuts to switch audio input and output.",
+    "uuid": "audio-switch-shortcuts@dbatis.github.com",
+    "url": "https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts",
+    "settings-schema": "com.github.dbatis.audio-switch-shortcuts",
+    "shell-version": [
+        "48"
+    ]
+}
