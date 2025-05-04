@@ -1,0 +1,27 @@
+{
+  "name": "gnome-shell-extension-audio-switch-shortcuts",
+  "version": "1.0.0",
+  "description": "Add keyboard shortcuts to switch audio input and output.",
+  "type": "module",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts.git"
+  },
+  "author": "Dimitris Batis <batis.dim@gmail.com>",
+  "license": "LGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/issues"
+  },
+  "homepage": "https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts",
+  "sideEffects": false,
+  "devDependencies": {
+    "eslint": "^9.26.0",
+    "eslint-plugin-jsdoc": "^50.6.11",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@girs/gjs": "^4.0.0-beta.23",
+    "@girs/gnome-shell": "^48.0.2"
+  }
+}
