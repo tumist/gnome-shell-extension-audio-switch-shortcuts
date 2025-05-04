@@ -485,6 +485,6 @@ $RECYCLE.BIN/
 
 # Custom temp directory
 temp/
-src/*.fs.js
 
+dist/
 
