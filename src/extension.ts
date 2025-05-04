@@ -12,17 +12,17 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
     enable() {
         this.settings = this.getSettings();
-        this.indicator = new PanelMenu.Button(0.5, this.metadata.name, false);
+        this.indicator = new PanelMenu.Button(0, this.metadata.name, false);
 
         const icon = new St.Icon({
-            icon_name: 'face-laugh-symbolic',
+            icon_name: 'audio-card-symbolic',
             style_class: 'system-status-icon',
         });
         this.indicator.add_child(icon);
 
         Main.panel.addToStatusArea(this.uuid, this.indicator);
 
-        const menu = new PopupMenu(this.indicator, 0.0, St.Side.TOP);
+        const menu = new PopupMenu(this.indicator, 0.5, St.Side.TOP);
 
         // Add a menu item to open the preferences window
         menu.addAction(_('Preferences...'), () => this.openPreferences());
