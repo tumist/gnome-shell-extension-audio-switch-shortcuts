@@ -14,10 +14,12 @@
     "ambient.d.ts"
   ],
   "files": [
+    "src/constants.ts",
+    "src/utils.ts",
+    "src/deviceSettings.ts",
+    "src/mixer.ts",
     "src/extension.ts",
-    "src/prefs.ts",
-    "src/prefs_output.ts",
-    "src/prefs_input.ts",
-    "src/prefs_misc.ts"
+    "src/keymapButton.ts",
+    "src/prefs.ts"
   ]
 }

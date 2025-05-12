@@ -12,24 +12,24 @@
             <summary>Display notifications when switching audio devices.</summary>
         </key>
 
-        <key name="cycle-input-hotkey" type="s">
-            <default><![CDATA['<Ctrl><Alt>F11']]></default>
+        <key name="cycle-input-hotkey" type="as">
+            <default><![CDATA[['<Ctrl><Alt>=']]]></default>
             <summary>Keyboard shortcut to switch audio input device.</summary>
         </key>
 
-        <key name="cycle-output-hotkey" type="s">
-            <default><![CDATA['<Ctrl><Alt>F7']]></default>
+        <key name="cycle-output-hotkey" type="as">
+            <default><![CDATA[['<Ctrl><Alt>-']]]></default>
             <summary>Keyboard shortcut to switch audio output device.</summary>
         </key>
 
-        <key name="audio-inputs" type="a{sb}">
-            <default>[]</default>
-            <summary>List of all audio inputs in preferred order. New devices are appended at bottom.</summary>
-        </key>
-
-        <key name="audio-outputs" type="a{sb}">
-            <default>[]</default>
-            <summary>List of all audio outputs in preferred order. New devices are appended at bottom.</summary>
+        <key name="audio-devices" type="s">
+            <default>'[]'</default>
+            <summary>Ordered list of audio devices.</summary>
+            <description>
+                JSON list of objects with fields: name, deviceType, cycled, active. Devices are
+                not deleted from this list, so that their settings are available if a device
+                was temporarily disconnected.
+            </description>
         </key>
 
     </schema>
