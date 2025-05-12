@@ -35,6 +35,10 @@ export class DeviceSettings {
         return this.load(deviceType).filter(d => d.deviceType === deviceType && d.active)
     }
 
+    getCycledDevices(deviceType: DeviceType) {
+        return this.load(deviceType).filter(d => d.deviceType === deviceType && d.active && d.cycled)
+    }
+
     /**
      * Should be used only on startup. This will delete all stored devices where cycled is false,
      * with the expectation that they will be re-added when discovering audio devices later on. If

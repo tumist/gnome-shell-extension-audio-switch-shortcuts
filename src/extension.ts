@@ -1,5 +1,7 @@
 import Gio from 'gi://Gio'
 import St from 'gi://St'
+import Meta from 'gi://Meta'
+import Shell from 'gi://Shell'
 
 import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
@@ -53,8 +55,39 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
             })
 
+            // Add keybindings
+            Main.wm.addKeybinding(Constants.KEY_OUTPUT_HOTKEY, this.gnomeSettings!,
+                Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
+                d => this.switchToNextDevice(DeviceType.OUTPUT))
+
+            Main.wm.addKeybinding(Constants.KEY_INPUT_HOTKEY, this.gnomeSettings!,
+                Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
+                d => this.switchToNextDevice(DeviceType.INPUT))
         })
 
+    }
+
+    /**
+     * Get current device, switch to next from settings where active = true, cycled = true
+     */
+    switchToNextDevice(deviceType: DeviceType) {
+        const current = this.mixer!.getDefaultOutput()
+        const devices = this.deviceSettings!.getCycledDevices(deviceType)
+        if (devices.length == 0) {
+            return;
+        }
+
+        // find current device in list. If not found or last device, revert to first device in list
+        const idx = devices.findIndex(d => d.name === current)
+        const newIdx = (idx+1) % devices.length
+
+        const result = deviceType === DeviceType.OUTPUT
+            ? this.mixer!.setOutput(devices[newIdx].name)
+            : this.mixer!.setInput(devices[newIdx].name)
+        if (result) {
+            // if false, device was not found and not changed
+            this.sendNotification(devices[newIdx])
+        }
     }
 
     /**
@@ -68,14 +101,16 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             const systemSource = MessageTray.getSystemSource();
 
             const title = device.deviceType == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
+            const icon = device.deviceType == DeviceType.INPUT
+                ? 'audio-input-microphone-symbolic' : 'audio-speakers-symbolic'
             const message = device.name
 
             const notification = new MessageTray.Notification({
                 source: systemSource,
                 title: title,
                 body: message,
-                iconName: 'audio-card-symbolic',
-                urgency: MessageTray.Urgency.LOW,
+                iconName: icon,
+                urgency: MessageTray.Urgency.NORMAL,
                 resident: false,
                 isTransient: true
             })
@@ -113,6 +148,9 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     }
 
     disable() {
+        Main.wm.removeKeybinding(Constants.KEY_OUTPUT_HOTKEY)
+        Main.wm.removeKeybinding(Constants.KEY_INPUT_HOTKEY)
+
         this.deviceSettings = undefined
         this.gnomeSettings = undefined
 

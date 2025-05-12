@@ -10,7 +10,7 @@ import * as Volume from 'resource:///org/gnome/shell/ui/status/volume.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 
 import {DeviceType} from "./deviceSettings.js";
-import {delay} from "./utils.js";
+import {delay, range} from "./utils.js";
 
 export enum Action {
     ADDED = "ADDED",
@@ -77,35 +77,74 @@ export class Mixer {
     }
 
     getAudioDevicesFromIds(ids: number[], type: DeviceType): string[] {
+        return this.getUIDevicesFromIds(ids, type).map(device => this.constructDeviceName(device))
+    }
+
+    private getUIDevicesFromIds(ids: number[], type: DeviceType): Gvc.MixerUIDevice[] {
         return ids.map((id) => {
             const lookup = type === DeviceType.OUTPUT
                 ? this.control.lookup_output_id(id)
                 : this.control.lookup_input_id(id);
 
-            return this.constructDeviceName(lookup)
+            return lookup
         });
+
+    }
+
+    getDefaultOutput(): string {
+        const stream = this.control.get_default_sink()
+        return this.constructDeviceName(this.control.lookup_device_from_stream(stream))
+    }
+
+    getDefaultInput(): string {
+        const stream = this.control.get_default_source()
+        return this.constructDeviceName(this.control.lookup_device_from_stream(stream))
+    }
+
+    /**
+     * Set output device by name.
+     * @param name display name
+     * @returns true if device changed, false if no device found with this name
+     */
+    setOutput(name: string): boolean {
+        const device = this.getDeviceFromName(name, DeviceType.OUTPUT)
+        if (device) {
+            this.control.change_output(device)
+            return true
+        } else {
+            return false
+        }
+    }
+
+    /**
+     * Set input device by name.
+     * @param name display name
+     * @returns true if device changed, false if no device found with this name
+     */
+    setInput(name: string): boolean {
+        const device = this.getDeviceFromName(name, DeviceType.INPUT)
+        if (device) {
+            this.control.change_input(device)
+            return true
+        } else {
+            return false
+        }
     }
 
     /**
      * Uses a Dummy Device "trick" from
      * https://github.com/kgshank/gse-sound-output-device-chooser/blob/master/sound-output-device-chooser@kgshank.net/base.js#LL299C20-L299C20
-     * @param displayNames display names
-     * @param type
-     * @returns A list of matching audio devices. If a given display name is not found,
-     * undefined is returned in its place.
+     * @param name display name
+     * @param type device type
+     * @returns mixer stream
      */
-    // getAudioDevicesFromDisplayNames(displayNames: string[], type: DeviceType): (AudioDevice | undefined)[] {
-    //     const dummyDevice = new Gvc.MixerUIDevice();
-    //
-    //     const devices = this.getAudioDevicesFromIds(
-    //         range(dummyDevice.get_id()),
-    //         type
-    //     );
-    //
-    //     return displayNames.map((name) =>
-    //         devices.find((device) => device.name === name)
-    //     );
-    // }
+    private getDeviceFromName(name: string, type: DeviceType): Gvc.MixerUIDevice | undefined {
+        const dummyDevice = new Gvc.MixerUIDevice();
+        const devices = this.getUIDevicesFromIds(range(dummyDevice.get_id()), type)
+        console.info(devices)
+
+        return devices.find(d => d !== null && this.constructDeviceName(d) === name)
+    }
 
     subscribeToDeviceChanges(
         callback: (event: MixerEvent) => void
