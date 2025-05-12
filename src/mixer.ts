@@ -9,13 +9,18 @@ import Gvc from 'gi://Gvc'
 import * as Volume from 'resource:///org/gnome/shell/ui/status/volume.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 
-import {AudioDevice, DeviceType} from "./deviceSettings.js";
-import {delay, range} from "./utils.js";
+import {DeviceType} from "./deviceSettings.js";
+import {delay} from "./utils.js";
 
+export enum Action {
+    ADDED = "ADDED",
+    REMOVED = "REMOVED"
+}
 
 export interface MixerEvent {
-    type: "output-added" | "output-removed" | "input-added" | "input-removed";
-    deviceId: number;
+    type: DeviceType,
+    action: Action,
+    deviceId: number
 }
 
 export interface MixerSubscription {
@@ -106,16 +111,16 @@ export class Mixer {
         callback: (event: MixerEvent) => void
     ): MixerSubscription {
         const addOutputId = this.control.connect("output-added", (_, deviceId) =>
-            callback({ deviceId, type: "output-added" })
+            callback({ deviceId, type: DeviceType.OUTPUT, action: Action.ADDED })
         );
         const removeOutputId = this.control.connect("output-removed", (_, deviceId) =>
-            callback({ deviceId, type: "output-removed" })
+            callback({ deviceId, type: DeviceType.OUTPUT, action: Action.REMOVED })
         );
         const addInputId = this.control.connect("input-added", (_, deviceId) =>
-            callback({ deviceId, type: "input-added" })
+            callback({ deviceId, type: DeviceType.INPUT, action: Action.ADDED })
         );
         const removeInputId = this.control.connect("input-removed", (_, deviceId) =>
-            callback({ deviceId, type: "input-removed" })
+            callback({ deviceId, type: DeviceType.INPUT, action: Action.REMOVED })
         );
 
         return { ids: [addOutputId, removeOutputId, addInputId, removeInputId] };
