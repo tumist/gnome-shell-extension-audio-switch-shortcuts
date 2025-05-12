@@ -36,15 +36,24 @@ export class DeviceSettings {
     }
 
     /**
-     * Should be used only on startup, to set all devices as disabled, so that the
-     * program can then re-set active devices.
+     * Should be used only on startup. This will delete all stored devices where cycled is false,
+     * with the expectation that they will be re-added when discovering audio devices later on. If
+     * a device has been set to cycled: true, then we keep it and just set it as inactive.
+     *
+     * This way, cycled devices will float at top of list in preferences, and we also do not
+     * keep an endless list of devices that may be disconnected and never used again, or re-connected
+     * with a different name.
      */
     disableAllDevices() {
         const devices = this.loadAll()
+        const newArray: AudioDevice[] = []
         for (const device of devices) {
-            device.active = false
+            if (device.cycled) {
+                device.active = false
+                newArray.push(device)
+            }
         }
-        this.store(devices)
+        this.store(newArray)
     }
 
     /**
