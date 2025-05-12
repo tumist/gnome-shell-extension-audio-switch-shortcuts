@@ -9,13 +9,14 @@ import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js'
 
 import * as Constants from './constants.js'
 import {AudioDevice, DeviceSettings, DeviceType} from "./deviceSettings.js"
-import {Mixer, MixerSource} from "./mixer.js";
+import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
 
 export default class AudioSwitchShortCutsExtension extends Extension {
     private gnomeSettings?: Gio.Settings
     private indicator?: PanelMenu.Button
     private deviceSettings?: DeviceSettings
     private mixer?: Mixer
+    private mixerSubscription?: MixerSubscription
 
     enable() {
         this.gnomeSettings = this.getSettings()
@@ -36,6 +37,20 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             })
             this.mixer.getAllDevices(DeviceType.INPUT).forEach(device => {
                 this.deviceSettings?.addOrEnableDevice(device, DeviceType.INPUT)
+            })
+
+            // listen to devices added or removed
+            this.mixerSubscription = this.mixer.subscribeToDeviceChanges(event => {
+                const name = this.mixer?.getAudioDevicesFromIds([event.deviceId], event.type)
+
+                if (name !== undefined) {
+                    if (event.action === Action.ADDED) {
+                        this.deviceSettings?.addOrEnableDevice(name[0], event.type)
+                    } else if (event.action === Action.REMOVED) {
+                        this.deviceSettings?.disableDevice(name[0], event.type)
+                    }
+                }
+
             })
 
         })
@@ -101,6 +116,10 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         this.deviceSettings = undefined
         this.gnomeSettings = undefined
 
+        if (this.mixerSubscription) {
+            this.mixer?.unsubscribe(this.mixerSubscription)
+            this.mixerSubscription = undefined
+        }
         this.mixer?.dispose()
         this.mixer = undefined
 
