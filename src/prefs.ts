@@ -93,6 +93,10 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
                 icon_name: 'list-drag-handle-symbolic',
                 css_classes: ['dim-label']
             }))
+            row.connect('notify::active', source => {
+                deviceSettings.setCycled(device.name, device.deviceType, source.get_active())
+            })
+
             group.add(row)
         })
     }
