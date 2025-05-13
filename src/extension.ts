@@ -13,6 +13,7 @@ import * as Constants from './constants.js'
 import {DeviceSettings, DeviceType, StoredDevice} from "./deviceSettings.js"
 import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
 import {delay} from "./utils.js";
+import {NotificationDestroyedReason} from "@girs/gnome-shell/ui/messageTray";
 
 export default class AudioSwitchShortCutsExtension extends Extension {
     private gnomeSettings?: Gio.Settings
@@ -112,12 +113,15 @@ export default class AudioSwitchShortCutsExtension extends Extension {
      *
      * @param device device that was just enabled
      */
-    sendNotification(device: StoredDevice): void {
-
-        // if notification source does not exist, create it
-        this.createNotificationSource()
+    async sendNotification(device: StoredDevice) {
 
         if (this.gnomeSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
+
+            if (this.notificationSource && this.notificationSource!.notifications.length > 0) {
+                this.notificationSource!.notifications.forEach(n => n.destroy(MessageTray.NotificationDestroyedReason.REPLACED))
+            }
+            // if notification source does not exist or was just destroyed by the code above, create it
+            this.createNotificationSource()
 
             const title = device.type == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
             const icon = device.type == DeviceType.INPUT
@@ -130,15 +134,11 @@ export default class AudioSwitchShortCutsExtension extends Extension {
                 body: message,
                 iconName: icon,
                 urgency: MessageTray.Urgency.NORMAL,
+                forFeedback: false,
                 resident: false,
                 isTransient: true
             })
-            if (this.notificationSource!.notifications.length > 0) {
-                this.notificationSource!.notifications.forEach(n => n.destroy() )
-                delay(200).then(() => this.notificationSource!.addNotification(notification))
-            } else {
-                this.notificationSource!.addNotification(notification)
-            }
+            this.notificationSource!.addNotification(notification)
 
         }
 
