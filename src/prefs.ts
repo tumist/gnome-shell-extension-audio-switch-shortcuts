@@ -1,6 +1,8 @@
 import Gio from 'gi://Gio'
 import Adw from 'gi://Adw'
 import Gtk from 'gi://Gtk'
+import Gdk from "gi://Gdk";
+import GObject from "gi://GObject";
 
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 
@@ -47,7 +49,10 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
         })
         page.add(devicesGroup)
 
-        this.createDeviceList(devicesGroup, deviceSettings, DeviceType.OUTPUT)
+        const listBox = new Gtk.ListBox({css_classes: ['boxed-list']})
+        devicesGroup.add(listBox)
+
+        this.createDeviceList(listBox, deviceSettings, DeviceType.OUTPUT)
 
         return page
     }
@@ -78,12 +83,18 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
         })
         page.add(devicesGroup)
 
-        this.createDeviceList(devicesGroup, deviceSettings, DeviceType.INPUT)
+        const listBox = new Gtk.ListBox({css_classes: ['boxed-list']})
+        devicesGroup.add(listBox)
+
+        this.createDeviceList(listBox, deviceSettings, DeviceType.INPUT)
 
         return page
     }
 
-    private createDeviceList(group: Adw.PreferencesGroup, deviceSettings: DeviceSettings, deviceType: DeviceType) {
+    private createDeviceList(group: Gtk.ListBox, deviceSettings: DeviceSettings, deviceType: DeviceType) {
+
+        const rowList: Adw.SwitchRow[] = [] // used later on for drag-and-drop
+
         deviceSettings.getActiveDevices(deviceType).forEach(device => {
             const row = new Adw.SwitchRow({
                 title: device.name,
@@ -97,8 +108,81 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
                 deviceSettings.setCycled(device.name, device.type, source.get_active())
             })
 
-            group.add(row)
+            group.append(row)
+            rowList.push(row)
         })
+
+        // add drag-and-drop capability, code based on GNOME Workbench example
+        const dropTarget = Gtk.DropTarget.new(Gtk.ListBoxRow.$gtype, Gdk.DragAction.MOVE);
+        group.add_controller(dropTarget)
+
+        // Drag:
+        for (const row of rowList) {
+            let drag_x: number
+            let drag_y: number
+
+            const dropController = new Gtk.DropControllerMotion()
+
+            const dragSource = new Gtk.DragSource({
+                actions: Gdk.DragAction.MOVE
+            })
+
+            row.add_controller(dragSource)
+            row.add_controller(dropController)
+
+            dragSource.connect('prepare', (_source, x, y) => {
+                drag_x = x
+                drag_y = y
+
+                const value = new GObject.Value()
+                value.init(Gtk.ListBoxRow.$gtype)
+                value.set_object(row)
+
+                return Gdk.ContentProvider.new_for_value(value)
+            })
+
+            dragSource.connect('drag-begin', (_source, drag) => {
+                const dragWidget = new Gtk.ListBox
+                dragWidget.set_size_request(row.get_width(), row.get_height())
+                dragWidget.add_css_class('boxed-list')
+
+                const dragRow = new Adw.SwitchRow({title: row.title, active: row.active})
+                dragRow.add_prefix(
+                    new Gtk.Image({iconName: 'list-drag-handle-symbolic', css_classes: ['dim-label']})
+                )
+                dragWidget.append(dragRow)
+                dragWidget.drag_highlight_row(dragRow)
+
+                const icon = Gtk.DragIcon.get_for_drag(drag)
+                icon.child = dragWidget
+
+                drag.set_hotspot(drag_x, drag_y)
+            })
+
+            dropController.connect("enter", () => {
+                group.drag_highlight_row(row);
+            });
+
+            dropController.connect("leave", () => {
+                group.drag_unhighlight_row();
+            });
+        }
+
+        // Drop:
+        dropTarget.connect('drop', (_drop, value: Adw.SwitchRow, _x, y) => {
+            const targetRow = group.get_row_at_y(y)
+            const targetIndex = targetRow?.get_index()
+
+            if (value && targetRow ) {
+                group.remove(value)
+                group.insert(value, targetIndex!)
+                targetRow.set_state_flags(Gtk.StateFlags.NORMAL, true)
+                return true
+            } else {
+                return false
+            }
+        })
+
     }
 
     miscPage(settings: Gio.Settings): Adw.PreferencesPage {
