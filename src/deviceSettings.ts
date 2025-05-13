@@ -116,16 +116,21 @@ export class DeviceSettings {
     /**
      * Remove the device from its current position, add it in the new position. Should only be used for active devices.
      *
-     * @param device device to alter.
+     * @param name device to alter.
+     * @param type device type
      * @param newPosition zero-based index of new position, relative to devices of same type
      */
-    reorderDevice(device: StoredDevice, newPosition: number) {
-        if (!device.active) {
+    reorderDevice(name: string, type: DeviceType, newPosition: number) {
+
+        const devices = this.loadAll()
+
+        // find device. If not found, ignore
+        const device = devices.find(d => d.name === name && d.type === type);
+        if (!device || !device.active) {
             // guard against misuse
             return
         }
 
-        const devices = this.loadAll()
         const newArray: StoredDevice[] = []
         let deviceCount = 0
         let wasPlacedInLoop = false
@@ -135,7 +140,7 @@ export class DeviceSettings {
             } else if (storedDevice.type === device.type && storedDevice.active) {
                 // active device, increase counter and check if we must place the device there
                 deviceCount++
-                if (deviceCount > newPosition) {
+                if (!wasPlacedInLoop && deviceCount > newPosition) {
                     newArray.push(device)
                     wasPlacedInLoop = true
                 }

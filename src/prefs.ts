@@ -177,6 +177,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
                 group.remove(value)
                 group.insert(value, targetIndex!)
                 targetRow.set_state_flags(Gtk.StateFlags.NORMAL, true)
+                deviceSettings.reorderDevice(value.title, deviceType, targetIndex!)
                 return true
             } else {
                 return false
