@@ -10,8 +10,9 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js'
 
 import * as Constants from './constants.js'
-import {AudioDevice, DeviceSettings, DeviceType} from "./deviceSettings.js"
+import {DeviceSettings, DeviceType, StoredDevice} from "./deviceSettings.js"
 import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
+import {delay} from "./utils.js";
 
 export default class AudioSwitchShortCutsExtension extends Extension {
     private gnomeSettings?: Gio.Settings
@@ -19,6 +20,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     private deviceSettings?: DeviceSettings
     private mixer?: Mixer
     private mixerSubscription?: MixerSubscription
+    private notificationSource?: MessageTray.Source
 
     enable() {
         this.gnomeSettings = this.getSettings()
@@ -31,25 +33,28 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             this.mixer = mixer;
 
             // set all devices as inactive, so that we re-set their status
-            this.deviceSettings?.disableAllDevices()
+            this.deviceSettings?.preStartup()
 
             // add devices in settings
             this.mixer.getAllDevices(DeviceType.OUTPUT).forEach(device => {
-                this.deviceSettings?.addOrEnableDevice(device, DeviceType.OUTPUT)
+                this.deviceSettings?.addOrEnableDevice(device.name, device.id, DeviceType.OUTPUT)
             })
             this.mixer.getAllDevices(DeviceType.INPUT).forEach(device => {
-                this.deviceSettings?.addOrEnableDevice(device, DeviceType.INPUT)
+                this.deviceSettings?.addOrEnableDevice(device.name, device.id, DeviceType.INPUT)
             })
+
+            // remove inactive, non-cycled devices
+            this.deviceSettings?.postStartup()
 
             // listen to devices added or removed
             this.mixerSubscription = this.mixer.subscribeToDeviceChanges(event => {
-                const name = this.mixer?.getAudioDevicesFromIds([event.deviceId], event.type)
+                const mixerDevice = this.mixer?.getAudioDevicesFromIds([event.deviceId], event.type)
 
-                if (name !== undefined) {
+                if (mixerDevice !== undefined) {
                     if (event.action === Action.ADDED) {
-                        this.deviceSettings?.addOrEnableDevice(name[0], event.type)
+                        this.deviceSettings?.addOrEnableDevice(mixerDevice[0].name, mixerDevice[0].id, event.type)
                     } else if (event.action === Action.REMOVED) {
-                        this.deviceSettings?.disableDevice(name[0], event.type)
+                        this.deviceSettings?.disableDevice(mixerDevice[0].name, event.type)
                     }
                 }
 
@@ -71,7 +76,9 @@ export default class AudioSwitchShortCutsExtension extends Extension {
      * Get current device, switch to next from settings where active = true, cycled = true
      */
     switchToNextDevice(deviceType: DeviceType) {
-        const current = this.mixer!.getDefaultOutput()
+        const current = deviceType === DeviceType.OUTPUT
+            ? this.mixer!.getDefaultOutput()
+            : this.mixer!.getDefaultInput()
         const devices = this.deviceSettings!.getCycledDevices(deviceType)
         if (devices.length == 0) {
             return;
@@ -79,15 +86,25 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
         // find current device in list. If not found or last device, revert to first device in list
         const idx = devices.findIndex(d => d.name === current)
-        const newIdx = (idx+1) % devices.length
+        let found = false
+        let newIdx = (idx+1) % devices.length
+        while (!found && newIdx != idx) {
+            const result = deviceType === DeviceType.OUTPUT
+                ? this.mixer!.setOutput(devices[newIdx].id, devices[newIdx].name)
+                : this.mixer!.setInput(devices[newIdx].id, devices[newIdx].name)
+            if (result) {
+                found = true
+            } else {
+                // try next device
+                newIdx = (newIdx+1) % devices.length
+            }
+        }
 
-        const result = deviceType === DeviceType.OUTPUT
-            ? this.mixer!.setOutput(devices[newIdx].name)
-            : this.mixer!.setInput(devices[newIdx].name)
-        if (result) {
+        if (found) {
             // if false, device was not found and not changed
             this.sendNotification(devices[newIdx])
         }
+
     }
 
     /**
@@ -95,18 +112,20 @@ export default class AudioSwitchShortCutsExtension extends Extension {
      *
      * @param device device that was just enabled
      */
-    sendNotification(device: AudioDevice): void {
+    sendNotification(device: StoredDevice): void {
+
+        // if notification source does not exist, create it
+        this.createNotificationSource()
 
         if (this.gnomeSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
-            const systemSource = MessageTray.getSystemSource();
 
-            const title = device.deviceType == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
-            const icon = device.deviceType == DeviceType.INPUT
+            const title = device.type == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
+            const icon = device.type == DeviceType.INPUT
                 ? 'audio-input-microphone-symbolic' : 'audio-speakers-symbolic'
             const message = device.name
 
             const notification = new MessageTray.Notification({
-                source: systemSource,
+                source: this.notificationSource,
                 title: title,
                 body: message,
                 iconName: icon,
@@ -114,13 +133,33 @@ export default class AudioSwitchShortCutsExtension extends Extension {
                 resident: false,
                 isTransient: true
             })
-
-            systemSource.addNotification(notification);
+            if (this.notificationSource!.notifications.length > 0) {
+                this.notificationSource!.notifications.forEach(n => n.destroy() )
+                delay(200).then(() => this.notificationSource!.addNotification(notification))
+            } else {
+                this.notificationSource!.addNotification(notification)
+            }
 
         }
 
     }
 
+    private createNotificationSource() {
+        if (this.notificationSource === undefined) {
+            const policy = new MessageTray.NotificationGenericPolicy()
+
+            this.notificationSource = new MessageTray.Source({
+                title: _('Audio Switch'),
+                iconName: 'audio-card-symbolic',
+                policy: policy,
+            })
+
+            this.notificationSource.connect('destroy', source => {
+                this.notificationSource = undefined
+            })
+            Main.messageTray.add(this.notificationSource)
+        }
+    }
 
     taskbarIcon() {
         this.indicator = new PanelMenu.Button(0, this.metadata.name, false)
@@ -163,6 +202,10 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
         this.indicator?.destroy()
         this.indicator = undefined
+
+        if (this.notificationSource) {
+            this.notificationSource = undefined
+        }
     }
 
 }

@@ -26,9 +26,11 @@
             <default>'[]'</default>
             <summary>Ordered list of audio devices.</summary>
             <description>
-                JSON list of objects with fields: name, deviceType, cycled, active. Devices are
-                not deleted from this list, so that their settings are available if a device
-                was temporarily disconnected.
+                JSON list of objects with fields: id, name, deviceType, cycled, active.
+                Of those attributes, id and active are not actually permanent, but initialized
+                every time the extension is enabled. Furthermore, devices with cycled = false, active = false
+                are removed on startup, so as not to keep old devices that will probably never be
+                used again.
             </description>
         </key>
 

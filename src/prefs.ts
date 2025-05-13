@@ -94,7 +94,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
                 css_classes: ['dim-label']
             }))
             row.connect('notify::active', source => {
-                deviceSettings.setCycled(device.name, device.deviceType, source.get_active())
+                deviceSettings.setCycled(device.name, device.type, source.get_active())
             })
 
             group.add(row)

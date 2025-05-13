@@ -27,6 +27,14 @@ export interface MixerSubscription {
     ids: number[];
 }
 
+/**
+ * Represents the id of a device from MixerControl
+ */
+export type MixerDevice = {
+    id: number,
+    name: string
+}
+
 export class MixerSource {
     async getMixer(): Promise<Mixer> {
         const mixer = Volume.getMixerControl();
@@ -57,7 +65,7 @@ async function waitForMixerToBeReady(
 export class Mixer {
     constructor(private control: Gvc.MixerControl, private disposal: () => void) {}
 
-    getAllDevices(type: DeviceType): string[] {
+    getAllDevices(type: DeviceType): MixerDevice[] {
         const quickSettings = Main.panel.statusArea.quickSettings
         const devices = type === DeviceType.OUTPUT
             ? quickSettings._volumeOutput._output._deviceItems
@@ -76,8 +84,10 @@ export class Mixer {
         return device.origin ? `${device.description} - ${device.origin}` : device.description
     }
 
-    getAudioDevicesFromIds(ids: number[], type: DeviceType): string[] {
-        return this.getUIDevicesFromIds(ids, type).map(device => this.constructDeviceName(device))
+    getAudioDevicesFromIds(ids: number[], type: DeviceType): MixerDevice[] {
+        return this.getUIDevicesFromIds(ids, type).map(device => {
+            return { id: device.get_id(), name: this.constructDeviceName(device) }
+        })
     }
 
     private getUIDevicesFromIds(ids: number[], type: DeviceType): Gvc.MixerUIDevice[] {
@@ -102,12 +112,21 @@ export class Mixer {
     }
 
     /**
-     * Set output device by name.
+     * Set output device. First, try by id. If id not found, try finding it with name.
+     *
+     * @param id device id
      * @param name display name
      * @returns true if device changed, false if no device found with this name
      */
-    setOutput(name: string): boolean {
-        const device = this.getDeviceFromName(name, DeviceType.OUTPUT)
+    setOutput(id: number, name: string): boolean {
+        let device = this.control.lookup_output_id(id);
+        if (!device) {
+            const deviceByName = this.getDeviceFromName(name, DeviceType.OUTPUT)
+            if (deviceByName) {
+                device = deviceByName
+            }
+        }
+
         if (device) {
             this.control.change_output(device)
             return true
@@ -117,12 +136,21 @@ export class Mixer {
     }
 
     /**
-     * Set input device by name.
+     * Set input device. First, try by id. If id not found, try finding it with name.
+     *
+     * @param id device id
      * @param name display name
      * @returns true if device changed, false if no device found with this name
      */
-    setInput(name: string): boolean {
-        const device = this.getDeviceFromName(name, DeviceType.INPUT)
+    setInput(id: number, name: string): boolean {
+        let device = this.control.lookup_input_id(id);
+        if (!device) {
+            const deviceByName = this.getDeviceFromName(name, DeviceType.INPUT)
+            if (deviceByName) {
+                device = deviceByName
+            }
+        }
+
         if (device) {
             this.control.change_input(device)
             return true
