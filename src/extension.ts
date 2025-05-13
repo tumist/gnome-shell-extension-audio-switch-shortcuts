@@ -12,8 +12,7 @@ import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js'
 import * as Constants from './constants.js'
 import {DeviceSettings, DeviceType, StoredDevice} from "./deviceSettings.js"
 import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
-import {delay} from "./utils.js";
-import {NotificationDestroyedReason} from "@girs/gnome-shell/ui/messageTray";
+
 
 export default class AudioSwitchShortCutsExtension extends Extension {
     private gnomeSettings?: Gio.Settings
@@ -64,11 +63,11 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             // Add keybindings
             Main.wm.addKeybinding(Constants.KEY_OUTPUT_HOTKEY, this.gnomeSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-                d => this.switchToNextDevice(DeviceType.OUTPUT))
+                _ => this.switchToNextDevice(DeviceType.OUTPUT))
 
             Main.wm.addKeybinding(Constants.KEY_INPUT_HOTKEY, this.gnomeSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-                d => this.switchToNextDevice(DeviceType.INPUT))
+                _ => this.switchToNextDevice(DeviceType.INPUT))
         })
 
     }
@@ -154,7 +153,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
                 policy: policy,
             })
 
-            this.notificationSource.connect('destroy', source => {
+            this.notificationSource.connect('destroy', _ => {
                 this.notificationSource = undefined
             })
             Main.messageTray.add(this.notificationSource)
