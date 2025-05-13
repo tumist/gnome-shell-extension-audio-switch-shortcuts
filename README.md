@@ -2,7 +2,7 @@
 
 ## Installation
 
-## Install from published release
+### Install from published release
 
 You can download the latest release from TODO. Then, copy the folder to `~/.local/share/gnome-shell/extensions`.
 You may need to log out before the extension will become available. When logging back in, you can run the following
