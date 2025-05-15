@@ -28,5 +28,5 @@ install: pack
 	@cp -rf $(OUTPUT_DIR) ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
 
 clean:
-	@rm -rf $(OUTPUT_DIR) $(NAME).zip gschemas/gschemas.compiled
+	@rm -rf $(OUTPUT_DIR) gschemas/gschemas.compiled
 
