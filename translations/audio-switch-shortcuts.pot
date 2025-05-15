@@ -1,0 +1,108 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-15 21:20+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: dist/extension.js:99
+msgid "Audio Input"
+msgstr ""
+
+#: dist/extension.js:99
+msgid "Audio Output"
+msgstr ""
+
+#: dist/extension.js:120
+msgid "Audio Switch Shortcuts"
+msgstr ""
+
+#: dist/extension.js:140
+msgid "Preferences..."
+msgstr ""
+
+#: dist/keymapButton.js:55 dist/keymapButton.js:79
+msgid "New accelerator…"
+msgstr ""
+
+#: dist/keymapButton.js:82
+msgid "Use Backspace to clear"
+msgstr ""
+
+#: dist/prefs.js:21
+msgid "Audio Outputs"
+msgstr ""
+
+#: dist/prefs.js:25
+msgid "Audio Output Shortcuts"
+msgstr ""
+
+#: dist/prefs.js:28 dist/prefs.js:49
+msgid "Keyboard shortcut"
+msgstr ""
+
+#: dist/prefs.js:28
+msgid "Switch to next audio output device"
+msgstr ""
+
+#: dist/prefs.js:31 dist/prefs.js:52
+msgid "Audio Devices"
+msgstr ""
+
+#: dist/prefs.js:32 dist/prefs.js:53
+msgid ""
+"Select the devices to cycle through when the keyboard shortcut is pressed. "
+"Drag them to set the order."
+msgstr ""
+
+#: dist/prefs.js:42
+msgid "Audio Inputs"
+msgstr ""
+
+#: dist/prefs.js:46
+msgid "Audio Input Shortcuts"
+msgstr ""
+
+#: dist/prefs.js:49
+msgid "Switch to next audio input device"
+msgstr ""
+
+#: dist/prefs.js:136
+msgid "Settings"
+msgstr ""
+
+#: dist/prefs.js:140
+msgid "Appearance"
+msgstr ""
+
+#: dist/prefs.js:141
+msgid "Configure the appearance of this extension"
+msgstr ""
+
+#: dist/prefs.js:146
+msgid "Show Indicator"
+msgstr ""
+
+#: dist/prefs.js:147
+msgid "Show a tray icon, to get to settings quicker"
+msgstr ""
+
+#: dist/prefs.js:151
+msgid "Show Notifications"
+msgstr ""
+
+#: dist/prefs.js:152
+msgid "Display a notification message when you press a shortcut"
+msgstr ""
