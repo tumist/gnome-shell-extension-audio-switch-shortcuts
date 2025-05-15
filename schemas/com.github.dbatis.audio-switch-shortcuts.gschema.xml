@@ -13,12 +13,12 @@
         </key>
 
         <key name="cycle-input-hotkey" type="as">
-            <default><![CDATA[['<Ctrl><Alt>=']]]></default>
+            <default><![CDATA[['<Ctrl><Alt>equal']]]></default>
             <summary>Keyboard shortcut to switch audio input device.</summary>
         </key>
 
         <key name="cycle-output-hotkey" type="as">
-            <default><![CDATA[['<Ctrl><Alt>-']]]></default>
+            <default><![CDATA[['<Ctrl><Alt>minus']]]></default>
             <summary>Keyboard shortcut to switch audio output device.</summary>
         </key>
 
