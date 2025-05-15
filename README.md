@@ -1,8 +1,8 @@
 # Audio Switch Shortcuts
 
 **Audio Switch Shortcuts** is a simple extension for GNOME 48 and onwards, that allows you to switch speakers
-and microphones with global keyboard shortcuts, instead of having to use the mouse to open the Gnome Panel
-and navigate menus.
+and microphones with global keyboard shortcuts, instead using the mouse to open the Gnome Panel
+or navigate menus.
 
 Similar to [Soundswitch](https://github.com/Belphemur/SoundSwitch) for Windows, it allows you to select
 specific audio devices to cycle through, using any keyboard shortcut that is convenient to you. Compared to
