@@ -148,7 +148,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             const policy = new MessageTray.NotificationGenericPolicy()
 
             this.notificationSource = new MessageTray.Source({
-                title: _('Audio Switch'),
+                title: _('Audio Switch Shortcuts'),
                 iconName: 'audio-card-symbolic',
                 policy: policy,
             })
