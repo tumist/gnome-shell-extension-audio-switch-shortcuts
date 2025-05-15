@@ -16,8 +16,9 @@ Since this is an extension for the desktop environment, these shortcuts will wor
 ### Install from published release
 
 You can download the latest release from [the releases page](https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/releases).
-Then, copy the folder to `~/.local/share/gnome-shell/extensions`. You may need to log out before the extension will
-become available. When logging back in, you can run the following command to enable the extension:
+Then, copy the contents of the downloaded archive to `~/.local/share/gnome-shell/extensions/audio-switch-shortcuts@dbatis.github.com`.
+You may need to log out before the extension will become available. When logging back in, you can run the
+following command to enable the extension:
 
 ```shell
 /usr/bin/gnome-extensions enable audio-switch-shortcuts@dbatis.github.com
