@@ -1,0 +1,114 @@
+#
+# Dimitris Batis <batis.dim@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-15 21:36+0300\n"
+"PO-Revision-Date: 2025-05-15 21:55+0300\n"
+"Last-Translator: Dimitris Batis <batis.dim@gmail.com>\n"
+"Language-Team: Greek\n"
+"Language: el\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-DL-Lang: el\n"
+"X-DL-Module: \n"
+"X-DL-Branch: \n"
+"X-DL-Domain: \n"
+"X-Generator: Gtranslator 48.0\n"
+
+#: dist/extension.js:99
+msgid "Audio Input"
+msgstr "Συσκευή Εισόδου"
+
+#: dist/extension.js:99
+msgid "Audio Output"
+msgstr "Συσκευή Εξόδου"
+
+#: dist/extension.js:120
+msgid "Audio Switch Shortcuts"
+msgstr ""
+
+#: dist/extension.js:140
+msgid "Preferences..."
+msgstr "Ρυθμίσεις..."
+
+#: dist/keymapButton.js:55 dist/keymapButton.js:79
+msgid "New accelerator…"
+msgstr "Νέα συντόμευση..."
+
+#: dist/keymapButton.js:82
+msgid "Use Backspace to clear"
+msgstr "Πατήστε Backspace για καθαρισμό της συντόμευσης"
+
+#: dist/prefs.js:21
+msgid "Audio Outputs"
+msgstr "Συσκευές εξόδου"
+
+#: dist/prefs.js:25
+msgid "Audio Output Shortcuts"
+msgstr "Συντομεύσεις συσκευής εξόδου"
+
+#: dist/prefs.js:28 dist/prefs.js:49
+msgid "Keyboard shortcut"
+msgstr "Συντόμευση"
+
+#: dist/prefs.js:28
+msgid "Switch to next audio output device"
+msgstr "Αλλαγή στην επόμενη συσκευή εξόδου"
+
+#: dist/prefs.js:31 dist/prefs.js:52
+msgid "Audio Devices"
+msgstr "Συσκευές Ήχου"
+
+#: dist/prefs.js:32 dist/prefs.js:53
+msgid ""
+"Select the devices to cycle through when the keyboard shortcut is pressed. "
+"Drag them to set the order."
+msgstr ""
+"Επιλέξτε τις συσκευές στις οποίες θα εναλλάσσονται όταν πατηθεί η "
+"συντόμευση. Σύρτε την συσκευή για να ορίσετε τη σειρά εναλλαγής."
+
+#: dist/prefs.js:42
+msgid "Audio Inputs"
+msgstr "Συσκευές Εισόδου"
+
+#: dist/prefs.js:46
+msgid "Audio Input Shortcuts"
+msgstr "Συντομεύσεις συσκευής εισόδου"
+
+#: dist/prefs.js:49
+msgid "Switch to next audio input device"
+msgstr "Αλλαγή στην επόμενη συσκευή εισόδου"
+
+#: dist/prefs.js:136
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#: dist/prefs.js:140
+msgid "Appearance"
+msgstr "Εμφάνιση"
+
+#: dist/prefs.js:141
+msgid "Configure the appearance of this extension"
+msgstr "Διαμορφώστε την εμφάνιση αυτής της επέκτασης"
+
+#: dist/prefs.js:146
+msgid "Show Indicator"
+msgstr "Εμφάνιση στη γραμμή εργασιών"
+
+#: dist/prefs.js:147
+msgid "Show a tray icon, to get to settings quicker"
+msgstr ""
+"Εμφάνιση εικονιδίου στην γραμμή εργασιών, για ταχύτερη πρόσβαση στις "
+"ρυθμίσεις"
+
+#: dist/prefs.js:151
+msgid "Show Notifications"
+msgstr "Εμφάνιση ειδοποιήσεων"
+
+#: dist/prefs.js:152
+msgid "Display a notification message when you press a shortcut"
+msgstr "Εμφάνιση μηνύματος ειδοποίησης όταν πατάτε μια συντόμευση"

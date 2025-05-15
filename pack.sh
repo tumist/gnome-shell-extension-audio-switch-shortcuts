@@ -26,7 +26,7 @@ if [ $TRANSLATION_COUNT != 0 ]; then
 fi
 
 # Get all .js files that need to be included as extra sources
-EXTRA_SOURCE_ARG=''
+EXTRA_SOURCE_ARG=""
 for f in $(cd $OUTPUT_DIR && ls *.js); do
   if [ "$f" != "extension.js" ] && [ "$f" != "prefs.js" ]; then
     EXTRA_SOURCE_ARG="${EXTRA_SOURCE_ARG} --extra-source=$f"
@@ -34,5 +34,5 @@ for f in $(cd $OUTPUT_DIR && ls *.js); do
 done
 
 # Finally, do the actual packing
-(cd $OUTPUT_DIR/ && gnome-extensions pack --extra-source=LICENSE $EXTRA_SOURCE_ARG $TRANSLATE_ARG --force)
+(cd $OUTPUT_DIR/ && gnome-extensions pack --extra-source=LICENSE $EXTRA_SOURCE_ARG $TRANSLATE_ARG --schema=schemas/gschemas.compiled --force)
 

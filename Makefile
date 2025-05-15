@@ -25,7 +25,7 @@ pack: compile compile_schema translate
 install: pack
 	@touch ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
 	@rm -rf ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
-	@cp -rf $(OUTPUT_DIR) ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
+	@unzip $(OUTPUT_DIR)/$(NAME)@$(DOMAIN).shell-extension.zip -d ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
 
 clean:
 	@rm -rf $(OUTPUT_DIR) gschemas/gschemas.compiled
