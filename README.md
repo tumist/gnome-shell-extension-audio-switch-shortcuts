@@ -13,11 +13,6 @@ Since this is an extension for the desktop environment, these shortcuts will wor
 
 ## Installation
 
-### Install from GNOME Extensions
-
-Installing from [GNOME Extensions](https://extensions.gnome.org) is yet not available, as its review
-is pending.
-
 ### Install from published release
 
 You can download the latest release from [the releases page](https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/releases).
