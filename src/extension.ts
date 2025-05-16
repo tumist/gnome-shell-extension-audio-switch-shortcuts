@@ -15,7 +15,7 @@ import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
 
 
 export default class AudioSwitchShortCutsExtension extends Extension {
-    private gnomeSettings?: Gio.Settings
+    private extensionSettings?: Gio.Settings
     private indicator?: PanelMenu.Button
     private deviceSettings?: DeviceSettings
     private mixer?: Mixer
@@ -23,8 +23,8 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     private notificationSource?: MessageTray.Source
 
     enable() {
-        this.gnomeSettings = this.getSettings()
-        this.deviceSettings = new DeviceSettings(this.gnomeSettings)
+        this.extensionSettings = this.getSettings()
+        this.deviceSettings = new DeviceSettings(this.extensionSettings)
         this.taskbarIcon()
 
 
@@ -61,11 +61,11 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             })
 
             // Add keybindings
-            Main.wm.addKeybinding(Constants.KEY_OUTPUT_HOTKEY, this.gnomeSettings!,
+            Main.wm.addKeybinding(Constants.KEY_OUTPUT_HOTKEY, this.extensionSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
                 _ => this.switchToNextDevice(DeviceType.OUTPUT))
 
-            Main.wm.addKeybinding(Constants.KEY_INPUT_HOTKEY, this.gnomeSettings!,
+            Main.wm.addKeybinding(Constants.KEY_INPUT_HOTKEY, this.extensionSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
                 _ => this.switchToNextDevice(DeviceType.INPUT))
         })
@@ -114,7 +114,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
      */
     async sendNotification(device: StoredDevice) {
 
-        if (this.gnomeSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
+        if (this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
 
             if (this.notificationSource && this.notificationSource!.notifications.length > 0) {
                 this.notificationSource!.notifications.forEach(n => n.destroy(MessageTray.NotificationDestroyedReason.REPLACED))
@@ -178,7 +178,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         this.indicator.setMenu(menu)
 
         // bind the "show-indicator" setting to the "visible" property.
-        this.gnomeSettings!.bind('show-indicator', this.indicator, 'visible',
+        this.extensionSettings!.bind('show-indicator', this.indicator, 'visible',
             Gio.SettingsBindFlags.DEFAULT)
 
     }
@@ -188,7 +188,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         Main.wm.removeKeybinding(Constants.KEY_INPUT_HOTKEY)
 
         this.deviceSettings = undefined
-        this.gnomeSettings = undefined
+        this.extensionSettings = undefined
 
         if (this.mixerSubscription) {
             this.mixer?.unsubscribe(this.mixerSubscription)
@@ -203,6 +203,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         if (this.notificationSource) {
             this.notificationSource = undefined
         }
+
     }
 
 }

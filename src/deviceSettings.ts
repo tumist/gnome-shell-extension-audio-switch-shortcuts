@@ -26,10 +26,10 @@ export type StoredDevice = {
  * by extension.ts and prefs.ts.
  */
 export class DeviceSettings {
-    private settings: Gio.Settings
+    private extensionSettings: Gio.Settings
 
     constructor(settings: Gio.Settings) {
-        this.settings = settings
+        this.extensionSettings = settings
     }
 
     getActiveDevices(deviceType: DeviceType) {
@@ -158,15 +158,15 @@ export class DeviceSettings {
     }
 
     private load(deviceType: DeviceType): StoredDevice[] {
-        return JSON.parse(this.settings.get_string(Constants.KEY_AUDIO_DEVICES))
+        return JSON.parse(this.extensionSettings.get_string(Constants.KEY_AUDIO_DEVICES))
             .filter((d: StoredDevice) => d.type === deviceType)
     }
 
     private loadAll(): StoredDevice[] {
-        return JSON.parse(this.settings.get_string(Constants.KEY_AUDIO_DEVICES))
+        return JSON.parse(this.extensionSettings.get_string(Constants.KEY_AUDIO_DEVICES))
     }
 
     private store(value: StoredDevice[]) {
-        this.settings.set_string(Constants.KEY_AUDIO_DEVICES, JSON.stringify(value))
+        this.extensionSettings.set_string(Constants.KEY_AUDIO_DEVICES, JSON.stringify(value))
     }
 }

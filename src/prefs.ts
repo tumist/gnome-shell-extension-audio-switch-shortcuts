@@ -13,17 +13,17 @@ import {buildShortcutButtonRow} from "./keymapButton.js";
 export default class AudioSwitchShortcutsPreferences extends ExtensionPreferences {
 
     fillPreferencesWindow(window: Adw.PreferencesWindow): Promise<void> {
-        const gnomeSettings = this.getSettings()
-        const deviceSettings = new DeviceSettings(gnomeSettings)
+        const extensionSettings = this.getSettings()
+        const deviceSettings = new DeviceSettings(extensionSettings)
 
-        window.add(this.outputPage(gnomeSettings, deviceSettings))
-        window.add(this.inputPage(gnomeSettings, deviceSettings))
-        window.add(this.miscPage(gnomeSettings))
+        window.add(this.outputPage(extensionSettings, deviceSettings))
+        window.add(this.inputPage(extensionSettings, deviceSettings))
+        window.add(this.miscPage(extensionSettings))
 
         return Promise.resolve()
     }
 
-    outputPage(gnomeSettings: Gio.Settings, deviceSettings: DeviceSettings): Adw.PreferencesPage {
+    outputPage(extensionSettings: Gio.Settings, deviceSettings: DeviceSettings): Adw.PreferencesPage {
 
         const page = new Adw.PreferencesPage({
             title: _('Audio Outputs'),
@@ -37,7 +37,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
 
         const keyboardRow = buildShortcutButtonRow(
             Constants.KEY_OUTPUT_HOTKEY,
-            gnomeSettings,
+            extensionSettings,
             _('Keyboard shortcut'),
             _('Switch to next audio output device'),
         );
@@ -57,7 +57,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
         return page
     }
     
-    inputPage(gnomeSettings: Gio.Settings, deviceSettings: DeviceSettings): Adw.PreferencesPage {
+    inputPage(extensionSettings: Gio.Settings, deviceSettings: DeviceSettings): Adw.PreferencesPage {
 
         const page = new Adw.PreferencesPage({
             title: _('Audio Inputs'),
@@ -71,7 +71,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
 
         const keyboardRow = buildShortcutButtonRow(
             Constants.KEY_INPUT_HOTKEY,
-            gnomeSettings,
+            extensionSettings,
             _('Keyboard shortcut'),
             _('Switch to next audio input device'),
         );
@@ -186,7 +186,7 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
 
     }
 
-    miscPage(settings: Gio.Settings): Adw.PreferencesPage {
+    miscPage(extensionSettings: Gio.Settings): Adw.PreferencesPage {
         const page = new Adw.PreferencesPage({
             title: _('Settings'),
             icon_name: 'applications-system-symbolic',
@@ -211,8 +211,8 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
         })
         group.add(notifications)
 
-        settings!.bind(Constants.KEY_INDICATOR, indicator, 'active', Gio.SettingsBindFlags.DEFAULT)
-        settings!.bind(Constants.KEY_NOTIFICATIONS, notifications, 'active', Gio.SettingsBindFlags.DEFAULT)
+        extensionSettings!.bind(Constants.KEY_INDICATOR, indicator, 'active', Gio.SettingsBindFlags.DEFAULT)
+        extensionSettings!.bind(Constants.KEY_NOTIFICATIONS, notifications, 'active', Gio.SettingsBindFlags.DEFAULT)
 
         return page
     }
