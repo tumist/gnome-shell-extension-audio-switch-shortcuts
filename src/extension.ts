@@ -12,6 +12,7 @@ import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js'
 import * as Constants from './constants.js'
 import {DeviceSettings, DeviceType, StoredDevice} from "./deviceSettings.js"
 import {Action, Mixer, MixerSource, MixerSubscription} from "./mixer.js";
+import {disposeDelayTimeouts} from "./utils.js";
 
 
 export default class AudioSwitchShortCutsExtension extends Extension {
@@ -186,6 +187,8 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     disable() {
         Main.wm.removeKeybinding(Constants.KEY_OUTPUT_HOTKEY)
         Main.wm.removeKeybinding(Constants.KEY_INPUT_HOTKEY)
+
+        disposeDelayTimeouts()
 
         this.deviceSettings = undefined
         this.extensionSettings = undefined
