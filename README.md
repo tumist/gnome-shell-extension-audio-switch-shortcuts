@@ -1,5 +1,11 @@
 # Audio Switch Shortcuts
 
+<div align="center">
+  <a href="https://extensions.gnome.org/extension/8150/audio-switch-shortcuts/" >
+      <img src="https://img.shields.io/badge/Install%20from-extensions.gnome.org-4A86CF?style=for-the-badge&logo=Gnome&logoColor=white"/>
+  </a>
+</div>
+
 **Audio Switch Shortcuts** is a simple extension for GNOME 48 and onwards, that allows you to switch speakers
 and microphones with global keyboard shortcuts, instead using the mouse to open the Gnome Panel
 or navigate menus.
@@ -12,6 +18,12 @@ this functionality is already provided by GNOME in the Keyboard Shortcuts settin
 Since this is an extension for the desktop environment, these shortcuts will work on both X11 and Wayland.
 
 ## Installation
+
+### Install from GNOME Extensions
+
+The preferred installation method is to use the
+[GNOME Extensions](https://extensions.gnome.org/extension/8150/audio-switch-shortcuts/) website. By installing the
+extension from there, it can be automatically updated to the newest version.
 
 ### Install from published release
 
