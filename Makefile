@@ -13,7 +13,7 @@ node_modules: package.json
 compile: node_modules
 	tsc
 
-compile_schema: schemas/com.github.dbatis.audio-switch-shortcuts.gschema.xml
+compile_schema: schemas/org.gnome.shell.extensions.audio-switch-shortcuts.gschema.xml
 	glib-compile-schemas --strict schemas
 
 translate: compile
@@ -25,7 +25,7 @@ pack: compile compile_schema translate
 install: pack
 	@touch ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
 	@rm -rf ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
-	@unzip $(OUTPUT_DIR)/$(NAME)@$(DOMAIN).shell-extension.zip -d ~/.local/share/gnome-shell/extensions/$(NAME)@$(DOMAIN)
+	@gnome-extensions install $(OUTPUT_DIR)/$(NAME)@$(DOMAIN).shell-extension.zip
 
 clean:
 	@rm -rf $(OUTPUT_DIR) gschemas/gschemas.compiled

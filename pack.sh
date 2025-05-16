@@ -34,5 +34,5 @@ for f in $(cd $OUTPUT_DIR && ls *.js); do
 done
 
 # Finally, do the actual packing
-(cd $OUTPUT_DIR/ && gnome-extensions pack --extra-source=LICENSE $EXTRA_SOURCE_ARG $TRANSLATE_ARG --schema=schemas/gschemas.compiled --force)
+(cd $OUTPUT_DIR/ && gnome-extensions pack --extra-source=LICENSE $EXTRA_SOURCE_ARG $TRANSLATE_ARG --force)
 

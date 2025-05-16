@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-16 18:14+0300\n"
+"POT-Creation-Date: 2025-05-16 19:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: dist/extension.js:99
+#: dist/extension.js:100
 msgid "Audio Input"
 msgstr ""
 
-#: dist/extension.js:99
+#: dist/extension.js:100
 msgid "Audio Output"
 msgstr ""
 
-#: dist/extension.js:120
+#: dist/extension.js:121
 msgid "Audio Switch Shortcuts"
 msgstr ""
 
-#: dist/extension.js:140
+#: dist/extension.js:141
 msgid "Preferences..."
 msgstr ""
 
