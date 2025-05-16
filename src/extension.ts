@@ -177,10 +177,8 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         menu.addAction(_('Preferences...'), () => this.openPreferences())
         this.indicator.setMenu(menu)
 
-        // Create a new GSettings object, and bind the "show-indicator"
-        // setting to the "visible" property.
-        this.gnomeSettings = this.getSettings()
-        this.gnomeSettings.bind('show-indicator', this.indicator, 'visible',
+        // bind the "show-indicator" setting to the "visible" property.
+        this.gnomeSettings!.bind('show-indicator', this.indicator, 'visible',
             Gio.SettingsBindFlags.DEFAULT)
 
     }
