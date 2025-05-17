@@ -76,6 +76,9 @@ Finally, in the *Settings* tab, you can also set:
 - if a short notification will be shown every time you cycle through devices. The notification is temporary
   and will not stay in the Notification Center. Notifications are shown only when a device switch actually occurs.
   So, if you have only toggled on one device, and its already the default device, no notification will be displayed.
+  In case you use another extension that
+  [renames audio devices](https://extensions.gnome.org/extension/6000/quick-settings-audio-devices-renamer/),
+  in the audio panel, Audio Switch Shortcuts will try to use that name instead.
 
 ## Extension removal
 

@@ -123,10 +123,13 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             // if notification source does not exist or was just destroyed by the code above, create it
             this.createNotificationSource()
 
+            // try to get name from audio panel, in case it has been changed by an extension
+            let alternateName = this.mixer?.getAudioPanelDeviceName(device)
+
             const title = device.type == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
             const icon = device.type == DeviceType.INPUT
                 ? 'audio-input-microphone-symbolic' : 'audio-speakers-symbolic'
-            const message = device.name
+            const message = alternateName !== undefined ? alternateName : device.name
 
             const notification = new MessageTray.Notification({
                 source: this.notificationSource,
