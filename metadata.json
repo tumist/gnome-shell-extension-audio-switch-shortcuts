@@ -6,7 +6,8 @@
     "url": "https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts",
     "settings-schema": "org.gnome.shell.extensions.audio-switch-shortcuts",
     "shell-version": [
-        "48"
+        "48",
+        "46"
     ],
     "gettext-domain": "audio-switch-shortcuts@dbatis.github.com"
 }
