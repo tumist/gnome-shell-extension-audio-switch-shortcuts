@@ -21,7 +21,6 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     private deviceSettings?: DeviceSettings
     private mixer?: Mixer
     private mixerSubscription?: MixerSubscription
-    private notificationSource?: MessageTray.Source
 
     enable() {
         this.extensionSettings = this.getSettings()
@@ -103,64 +102,23 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
         if (found) {
             // if false, device was not found and not changed
-            this.sendNotification(devices[newIdx])
+            this.showDeviceOSD(devices[newIdx]);
         }
 
     }
 
     /**
-     * Generate a Gnome notification which does not stay permanently in tray, only if notifications are enabled.
+     * Show device in OSD display, the same notification are used to indicate volume.
      *
      * @param device device that was just enabled
      */
-    async sendNotification(device: StoredDevice) {
-
+    showDeviceOSD(device: StoredDevice) {
         if (this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
-
-            if (this.notificationSource && this.notificationSource!.notifications.length > 0) {
-                this.notificationSource!.notifications.forEach(n => n.destroy(MessageTray.NotificationDestroyedReason.REPLACED))
-            }
-            // if notification source does not exist or was just destroyed by the code above, create it
-            this.createNotificationSource()
-
             // try to get name from audio panel, in case it has been changed by an extension
             let alternateName = this.mixer?.getAudioPanelDeviceName(device)
-
-            const title = device.type == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
-            const icon = device.type == DeviceType.INPUT
-                ? 'audio-input-microphone-symbolic' : 'audio-speakers-symbolic'
             const message = alternateName !== undefined ? alternateName : device.name
-
-            const notification = new MessageTray.Notification({
-                source: this.notificationSource,
-                title: title,
-                body: message,
-                iconName: icon,
-                urgency: MessageTray.Urgency.NORMAL,
-                forFeedback: false,
-                resident: false,
-                isTransient: true
-            })
-            this.notificationSource!.addNotification(notification)
-
-        }
-
-    }
-
-    private createNotificationSource() {
-        if (this.notificationSource === undefined) {
-            const policy = new MessageTray.NotificationGenericPolicy()
-
-            this.notificationSource = new MessageTray.Source({
-                title: _('Audio Switch Shortcuts'),
-                iconName: 'audio-card-symbolic',
-                policy: policy,
-            })
-
-            this.notificationSource.connect('destroy', _ => {
-                this.notificationSource = undefined
-            })
-            Main.messageTray.add(this.notificationSource)
+            const gicon = this.mixer?.getGIcon(device);
+            Main.osdWindowManager.show(-1, gicon, message, null, null)
         }
     }
 
@@ -205,10 +163,6 @@ export default class AudioSwitchShortCutsExtension extends Extension {
 
         this.indicator?.destroy()
         this.indicator = undefined
-
-        if (this.notificationSource) {
-            this.notificationSource = undefined
-        }
 
     }
 

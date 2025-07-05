@@ -6,6 +6,7 @@
  */
 
 import Gvc from 'gi://Gvc'
+import Gio from 'gi://Gio'
 import * as Volume from 'resource:///org/gnome/shell/ui/status/volume.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 
@@ -101,6 +102,17 @@ export class Mixer {
             // another extension may have messed with the audio panel
             return undefined
         }
+    }
+
+    getGIcon(device: StoredDevice): Gio.Icon {
+        const iconName = this.control.lookup_output_id(device.id).get_icon_name();
+        return Gio.ThemedIcon.new_with_default_fallbacks(iconName + "-symbolic");
+    }
+
+    getVolume(device: StoredDevice): number | undefined {
+        const uidevice = this.control.lookup_output_id(device.id);
+        const stream = this.control.get_stream_from_device(uidevice);
+        return stream.get_volume() / this.control.get_vol_max_norm();
     }
 
     /**
