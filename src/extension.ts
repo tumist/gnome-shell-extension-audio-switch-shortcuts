@@ -1,4 +1,5 @@
 import Gio from 'gi://Gio'
+import GLib from 'gi://GLib'
 import St from 'gi://St'
 import Meta from 'gi://Meta'
 import Shell from 'gi://Shell'
@@ -22,6 +23,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
     private mixer?: Mixer
     private mixerSubscription?: MixerSubscription
     private notificationSource?: MessageTray.Source
+    private lastKeypressTime?: number
 
     enable() {
         this.extensionSettings = this.getSettings()
@@ -64,12 +66,37 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             // Add keybindings
             Main.wm.addKeybinding(Constants.KEY_OUTPUT_HOTKEY, this.extensionSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-                _ => this.switchToNextDevice(DeviceType.OUTPUT))
+                _ => this.showOrSwitchDevice(DeviceType.OUTPUT))
 
             Main.wm.addKeybinding(Constants.KEY_INPUT_HOTKEY, this.extensionSettings!,
                 Meta.KeyBindingFlags.NONE, Shell.ActionMode.NORMAL,
-                _ => this.switchToNextDevice(DeviceType.INPUT))
+                _ => this.showOrSwitchDevice(DeviceType.INPUT))
         })
+
+    }
+
+    /**
+     * Show the current device if the key shortcut has not been pressed recently
+     */
+    showOrSwitchDevice(deviceType: DeviceType) {
+        if (!this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)
+            && !this.extensionSettings!.get_boolean(Constants.KEY_SHOW_VOLUME_OSD)) {
+            this.showOrSwitchDevice(deviceType);
+        } else {
+            const devices = this.deviceSettings!.getActiveDevices(deviceType)
+            const currentDevice = deviceType === DeviceType.OUTPUT
+                ? this.mixer!.getDefaultOutput()
+                : this.mixer!.getDefaultInput();
+            const currentIdx = devices.findIndex(d => d.name === currentDevice)
+            const now = GLib.get_monotonic_time();
+            if (this.lastKeypressTime === undefined ||
+                now - this.lastKeypressTime! > Constants.KEYREPEAT_INTERVAL) {
+                this.showVolumeOSD(devices[currentIdx]);
+            } else {
+                this.switchToNextDevice(deviceType);
+            }
+            this.lastKeypressTime = now;
+        }
 
     }
 
