@@ -1,11 +1,13 @@
 {
     "name": "Audio Switch Shortcuts",
     "description": "This extension allows you to switch speakers and microphones with global keyboard shortcuts, instead of using the mouse to open the Gnome Panel or navigate menus. It allows you to set specific audio devices to cycle through, and set your own hotkeys.",
-    "version-name": "1.0.2",
+    "version-name": "1.0.3",
     "uuid": "audio-switch-shortcuts@dbatis.github.com",
     "url": "https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts",
     "settings-schema": "org.gnome.shell.extensions.audio-switch-shortcuts",
     "shell-version": [
+        "46",
+        "47",
         "48"
     ],
     "gettext-domain": "audio-switch-shortcuts@dbatis.github.com"

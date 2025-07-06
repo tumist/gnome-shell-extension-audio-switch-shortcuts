@@ -104,6 +104,7 @@ export default class AudioSwitchShortCutsExtension extends Extension {
         if (found) {
             // if false, device was not found and not changed
             this.sendNotification(devices[newIdx])
+            this.showVolumeOSD(devices[newIdx])
         }
 
     }
@@ -115,7 +116,8 @@ export default class AudioSwitchShortCutsExtension extends Extension {
      */
     async sendNotification(device: StoredDevice) {
 
-        if (this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)) {
+        if (this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)
+                && !this.extensionSettings!.get_boolean(Constants.KEY_SHOW_VOLUME_OSD)) {
 
             if (this.notificationSource && this.notificationSource!.notifications.length > 0) {
                 this.notificationSource!.notifications.forEach(n => n.destroy(MessageTray.NotificationDestroyedReason.REPLACED))
@@ -127,21 +129,44 @@ export default class AudioSwitchShortCutsExtension extends Extension {
             let alternateName = this.mixer?.getAudioPanelDeviceName(device)
 
             const title = device.type == DeviceType.INPUT ? _("Audio Input") : _("Audio Output")
-            const icon = device.type == DeviceType.INPUT
-                ? 'audio-input-microphone-symbolic' : 'audio-speakers-symbolic'
+            const icon = this.mixer?.getIcon(device)
             const message = alternateName !== undefined ? alternateName : device.name
 
             const notification = new MessageTray.Notification({
                 source: this.notificationSource,
                 title: title,
                 body: message,
-                iconName: icon,
+                gicon: icon,
                 urgency: MessageTray.Urgency.NORMAL,
                 forFeedback: false,
                 resident: false,
                 isTransient: true
             })
             this.notificationSource!.addNotification(notification)
+
+        }
+
+    }
+
+    /**
+     * Display the volume OSD, if the relevant setting is enabled.
+     *
+     * Based on code from tumist at
+     * https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/commit/8df9194f823245945ae70abdff4c3964a615238f
+     *
+     * @param device device that was just enabled
+     */
+    async showVolumeOSD(device: StoredDevice) {
+
+        if (this.extensionSettings!.get_boolean(Constants.KEY_NOTIFICATIONS)
+            && this.extensionSettings!.get_boolean(Constants.KEY_SHOW_VOLUME_OSD)) {
+
+            // try to get name from audio panel, in case it has been changed by an extension
+            let alternateName = this.mixer?.getAudioPanelDeviceName(device)
+
+            const message = alternateName !== undefined ? alternateName : device.name
+            const icon = this.mixer?.getIcon(device)
+            Main.osdWindowManager.show(-1, icon, message, null, null)
 
         }
 
