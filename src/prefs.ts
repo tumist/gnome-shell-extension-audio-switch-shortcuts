@@ -9,6 +9,7 @@ import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Ex
 import * as Constants from './constants.js'
 import {DeviceSettings, DeviceType} from "./deviceSettings.js";
 import {buildShortcutButtonRow} from "./keymapButton.js";
+import BindingFlags = GObject.BindingFlags;
 
 export default class AudioSwitchShortcutsPreferences extends ExtensionPreferences {
 
@@ -211,8 +212,20 @@ export default class AudioSwitchShortcutsPreferences extends ExtensionPreference
         })
         group.add(notifications)
 
+        const osd = new Adw.SwitchRow({
+            title: _('Use Volume OSD for notifications'),
+            subtitle: _('Instead of the notification area, use the volume on-screen display area when switching devices.'),
+        })
+        notifications.bind_property('active', osd, 'sensitive', null)
+        group.add(osd)
+
         extensionSettings!.bind(Constants.KEY_INDICATOR, indicator, 'active', Gio.SettingsBindFlags.DEFAULT)
         extensionSettings!.bind(Constants.KEY_NOTIFICATIONS, notifications, 'active', Gio.SettingsBindFlags.DEFAULT)
+        extensionSettings!.bind(Constants.KEY_SHOW_VOLUME_OSD, osd, 'active', Gio.SettingsBindFlags.DEFAULT)
+
+        // enable/disable OSD setting. This line needs to be here after bindings,
+        // else it will not initialise properly when dialog first appears.
+        osd.set_sensitive(extensionSettings.get_boolean(Constants.KEY_NOTIFICATIONS))
 
         return page
     }

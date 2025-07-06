@@ -6,6 +6,7 @@
  */
 
 import Gvc from 'gi://Gvc'
+import Gio from "gi://Gio";
 import * as Volume from 'resource:///org/gnome/shell/ui/status/volume.js'
 import * as Main from 'resource:///org/gnome/shell/ui/main.js'
 
@@ -104,6 +105,52 @@ export class Mixer {
     }
 
     /**
+     * Get the icon for an audio device. If not found, use generic input or output icon.
+     *
+     * Based on code from tumist at
+     * https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/commit/8df9194f823245945ae70abdff4c3964a615238f
+     *
+     * @param device stored device in extension's settings
+     *
+     * @returns device icon , or generic input/output icon
+     */
+    getIcon(device: StoredDevice): Gio.Icon {
+        const mixerDevice = this.getUiDeviceFromStoredDevice(device)
+        const maybeIconName = mixerDevice?.get_icon_name()
+
+        if (!maybeIconName) {
+            // device not found, return generic icon
+            return device.type === DeviceType.OUTPUT
+                   ? Gio.ThemedIcon.new_with_default_fallbacks("audio-speakers-symbolic")
+                   : Gio.ThemedIcon.new_with_default_fallbacks("audio-input-microphone-symbolic")
+        } else {
+            return Gio.ThemedIcon.new_with_default_fallbacks(maybeIconName + "-symbolic")
+        }
+
+    }
+
+    /**
+     * Get volume level for an audio device, as a ratio to max volume.
+     *
+     * Based on code from tumist at
+     * https://github.com/dbatis/gnome-shell-extension-audio-switch-shortcuts/commit/8df9194f823245945ae70abdff4c3964a615238f
+     *
+     * @param device stored device in extension's settings
+     *
+     * @returns volume level, or undefined if device not found
+     * */
+    getVolume(device: StoredDevice): number | undefined {
+        const mixerDevice = this.getUiDeviceFromStoredDevice(device)
+
+        if (!mixerDevice) {
+            return undefined
+        } else {
+            const stream = this.control.get_stream_from_device(mixerDevice)
+            return stream.get_volume() / this.control.get_vol_max_norm()
+        }
+    }
+
+    /**
      * Generate a name similar to https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/status/volume.js#L132
      *
      * @param device Gvc lookup value
@@ -117,6 +164,21 @@ export class Mixer {
         return this.getUIDevicesFromIds(ids, type).map(device => {
             return { id: device.get_id(), name: this.constructDeviceName(device) }
         })
+    }
+
+    /**
+     * Convert a settings-stored device to Gvc mixer device.
+     *
+     * @param device stored device in extension's settings
+     *
+     * @returns mixer device, if found, null otherwise
+     *
+     * @private
+     */
+    private getUiDeviceFromStoredDevice(device: StoredDevice): Gvc.MixerUIDevice | null {
+        return device.type === DeviceType.OUTPUT
+            ? this.control.lookup_output_id(device.id)
+            : this.control.lookup_input_id(device.id)
     }
 
     private getUIDevicesFromIds(ids: number[], type: DeviceType): Gvc.MixerUIDevice[] {

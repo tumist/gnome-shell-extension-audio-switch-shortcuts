@@ -79,6 +79,9 @@ Finally, in the *Settings* tab, you can also set:
   In case you use another extension that
   [renames audio devices](https://extensions.gnome.org/extension/6000/quick-settings-audio-devices-renamer/),
   in the audio panel, Audio Switch Shortcuts will try to use that name instead.
+- you may select for the volume on-screen display to appear when switching devices, instead of the notification area.
+  In this case, this extension will use the same screen space that is used, for instance, when increasing or
+  decreasing the sound volume with the keyboard. This option is disabled if "Snow Notifications" is not enabled.
 
 ## Extension removal
 
@@ -93,6 +96,7 @@ You can also disable or remove the extension from the Gnome Extensions applicati
 
 ## Credits
 
+- Code for volume OSD display contributed by [tumist](https://github.com/tumist).
 - This program contains code derived from [Tiling Shell](https://github.com/domferr/tilingshell/tree/main),
   authored by Domenico Ferraro. Original code under
   [GPL 2.0 license](https://github.com/domferr/tilingshell/tree/main?tab=GPL-2.0-1-ov-file#readme).

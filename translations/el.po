@@ -112,3 +112,15 @@ msgstr "Εμφάνιση ειδοποιήσεων"
 #: dist/prefs.js:152
 msgid "Display a notification message when you press a shortcut"
 msgstr "Εμφάνιση μηνύματος ειδοποίησης όταν πατάτε μια συντόμευση"
+
+#: dist/prefs.js:156
+msgid "Use Volume OSD for notifications"
+msgstr "Χρήση της ένδειξης έντασης ήχου για ειδοποιήσεις"
+
+#: dist/prefs.js:157
+msgid ""
+"Instead of the notification area, use the volume on-screen display area when "
+"switching devices."
+msgstr ""
+"Χρήση της ένδειξης έντασης ήχου, αντί για τον χώρο ειδοποιήσεων, "
+"κατά την αλλαγή συσκευών."
